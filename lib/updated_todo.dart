@@ -5,7 +5,8 @@ import 'todo_model.dart';
 
 
 class UpdatedTodo extends StatefulWidget {
-  final updatedToDo;
+  final ToDoItem updatedToDo;
+
   const UpdatedTodo({Key? key,required this.updatedToDo}) : super(key: key);
 
   @override
@@ -15,16 +16,12 @@ class UpdatedTodo extends StatefulWidget {
 class _UpdatedTodoState extends State<UpdatedTodo> {
 
   var formKey = GlobalKey<FormState>();
-  late final userIdText =  TextEditingController(text: widget.updatedToDo['userId'].toString());
-  late final idText =  TextEditingController(text: widget.updatedToDo['id'].toString());
-  late final titleText =  TextEditingController(text: widget.updatedToDo['title']);
-  late bool completedtext = widget.updatedToDo['completed'];
+  late final titleText =  TextEditingController(text: widget.updatedToDo.title);
+  late bool completedtext = widget.updatedToDo.completed;
 
 
   @override
   void dispose(){
-    userIdText.dispose();
-    idText.dispose();
     titleText.dispose();
     super.dispose();
   }
@@ -45,29 +42,6 @@ class _UpdatedTodoState extends State<UpdatedTodo> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            TextFormField(
-              controller: userIdText,
-              keyboardType: TextInputType.name,
-              decoration: const InputDecoration(
-                hintText: 'User ID',
-                labelText: 'Ex: 1',
-              ),
-              validator: (idnum){
-                return (idnum == '') ? 'Please enter User ID' : null;
-              },
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: idText,
-              keyboardType: TextInputType.name,
-              decoration: const InputDecoration(
-                hintText: 'ID number',
-                labelText: 'Ex: 1',
-              ),
-              validator: (idnum){
-                return (idnum == '') ? 'Please enter ID number' : null;
-              },
-            ),
             const SizedBox(height: 20),
             TextFormField(
               controller: titleText,
@@ -104,11 +78,12 @@ class _UpdatedTodoState extends State<UpdatedTodo> {
                   if (validform) {
                     print('The Text Inputted are valid!');
                     ToDoItem newTodoitem = ToDoItem(
-                      userId: int.parse(userIdText.text),
-                      id: int.parse(idText.text),
+                      userId: widget.updatedToDo.userId,
+                      id: widget.updatedToDo.id,
                       title: titleText.text,
                       completed: completedtext,
                     );
+
                     Navigator.pop(context,newTodoitem);
                   }
                 },
@@ -121,3 +96,4 @@ class _UpdatedTodoState extends State<UpdatedTodo> {
     );
   }
 }
+

@@ -36,10 +36,10 @@ class _ToDoInfoState extends State<ToDoInfo> {
       body:  ListView(
         padding: const EdgeInsets.all(10),
         children: [
-          rowItem("ID", widget.todo['id']),
-          rowItem("User ID", widget.todo['userId']),
-          rowItem("Title", widget.todo['title']),
-          rowItem("Completed", widget.todo['completed'])
+          rowItem("ID", widget.todo.id),
+          rowItem("User ID", widget.todo.userId),
+          rowItem("Title", widget.todo.title),
+          rowItem("Completed", widget.todo.completed)
         ],
       ),
     );

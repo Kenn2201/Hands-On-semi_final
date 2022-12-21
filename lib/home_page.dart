@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List todos = <dynamic>[];
+  List<ToDoItem> todos = [];
 
   @override
   void initState() {
@@ -27,19 +27,25 @@ class _HomePageState extends State<HomePage> {
   getToDos()async{
     var url = Uri.parse('https://jsonplaceholder.typicode.com/todos');
     var response = await http.get(url);
-    var data = convert.jsonDecode(response.body);
-    for(var todo in data){
-      todos.add(ToDoItem.fromMap(todo));
-    }
+    print(response.statusCode);
+    List<dynamic>data = convert.jsonDecode(response.body);
     setState(() {
-      todos = data as List<dynamic>;
+      todos = data.map((todo1) => ToDoItem.fromMap(todo1)).toList();
     });
 
   }
-  UpdatedTodos()async{
-    await http.put(Uri.parse('https://jsonplaceholder.typicode.com/todos/'));
+  UpdatedTodos(ToDoItem todo2)async{
+    var response = await http.put(Uri.parse('https://jsonplaceholder.typicode.com/todos/${todo2.id}?title=${todo2.title}&completed=${todo2.completed}'));
+    if (response.statusCode == 200){
+      _showSnackBar(context,'"${todo2.title}" Updated Successfully');
+      print(response.statusCode);
+    }
   }
 
+  void _showSnackBar(BuildContext context, String message,){
+    final snackbar = SnackBar(content: Text(message),backgroundColor: Colors.green,);
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,16 +70,17 @@ class _HomePageState extends State<HomePage> {
                     side: const BorderSide(width: 2, color: Colors.yellow),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  title: Text(todos[index]['title']),
+                  title: Text(todoItem.title),
                   trailing: ElevatedButton(
                     onPressed: ()async{
                       var updatedTodo1 = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => UpdatedTodo(updatedToDo: todoItem,))
                       );
-
+                      UpdatedTodos(updatedTodo1);
                       setState(() {
                         todos[index] = updatedTodo1;
+
                       });
                     },
                     child: const Text('Update'),
@@ -82,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: (){
                     Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ToDoInfo(todo:todos[index],))
+                        MaterialPageRoute(builder: (context) => ToDoInfo(todo:todoItem,))
                     );
                   },
                 ),
@@ -91,7 +98,6 @@ class _HomePageState extends State<HomePage> {
             }
         ),
       ),
-
     );
   }
 }
